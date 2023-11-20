@@ -1,2 +1,2 @@
 prometheus-client
-psutil
+pandas
