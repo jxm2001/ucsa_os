@@ -41,7 +41,7 @@ def get_node_info():
             parts = line.split(':')
             key = parts[0].strip()
             value = parts[1].strip().split()[0]
-            mem_info[key] = int(value)
+            mem_info[key] = int(value) * 1024
     # disk size info
     df = pd.read_csv(os.popen("df -h"), delim_whitespace=True)
     selected_rows = df[df['Filesystem'].str.startswith('/dev/sd') |
@@ -74,7 +74,7 @@ def get_node_info():
             net_info['transmit_bytes'] += transmit_bytes
     # proc info
     output_lines = os.popen("ps axo pid,rss,vsz,comm").read().split('\n')
-    data = [line.split() for line in output_lines[1:] if line]
+    data = [line.split(maxsplit=3) for line in output_lines[1:] if line]
     proc_info = pd.DataFrame(data, columns=["PID", "RSS", "VSZ", "COMMAND"])
     return Node_Info(cpu_info, stat_info, mem_info, disk_size_info, disk_io_info, net_info, proc_info)
 
