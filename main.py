@@ -36,15 +36,23 @@ def convert_to_bytes(s):
     size, unit = s[:-1], s[-1]
     return int(float(size) * convert_unit_to_bytes(unit))
 
+def get_filesystem_type(filesystem):
+    output = os.popen(f"blkid -s TYPE -o value {filesystem}").read().strip()
+    return output
+
 def get_node_info():
     # cpu info
     cpu_info = {}
-    cpu_info['cpu_num'] = int(os.popen("grep 'processor' /proc/cpuinfo | sort -u | wc -l").read())
-    cpu_info['core_num'] = int(os.popen("grep 'core id' /proc/cpuinfo | sort -u | wc -l").read())
     with os.popen("lscpu") as file:
         for line in file:
             line = line.strip()
-            if line.startswith('L1d'):
+            if line.startswith('Thread(s)'):
+                cpu_info['threadPerCore'] = int(line.split(':')[1])
+            elif line.startswith('Core(s)'):
+                cpu_info['corePerSocket'] = int(line.split(':')[1])
+            elif line.startswith('Socket(s)'):
+                cpu_info['socket_num'] = int(line.split(':')[1])
+            elif line.startswith('L1d'):
                 parts = line.split()
                 cpu_info['l1d_size'] = int(parts[2]) * convert_unit_to_bytes(parts[3])
             elif line.startswith('L1i'):
@@ -60,12 +68,17 @@ def get_node_info():
     stat_info = {}
     with open('/proc/stat', 'r') as file:
         line = file.readline().split()
-        stat_info['cpu_time'] = [int(line[i]) for i in range(1, len(line))]
+        stat_info['cpu_time'] = [int(line[i]) / 100 for i in range(1, len(line))]
         for line in file:
             if line.startswith('procs_running'):
                 stat_info['procs_running'] = int(line.split()[1])
             elif line.startswith('procs_blocked'):
                 stat_info['procs_blocked'] = int(line.split()[1])
+        stat_info['procs_total'] = int(os.popen("ps -e | wc -l").read())
+    output = os.popen("uptime").read().strip().split()
+    stat_info['uptime_1'] = float(output[7].replace(',',''))
+    stat_info['uptime_5'] = float(output[8].replace(',',''))
+    stat_info['uptime_15'] = float(output[9].replace(',',''))
     # mem info
     mem_info = {}
     with open('/proc/meminfo', 'r') as file:
@@ -79,22 +92,25 @@ def get_node_info():
     selected_rows = df[df['Filesystem'].str.startswith('/dev/sd') |
                        df['Filesystem'].str.startswith('/dev/nvme') |
                        df['Filesystem'].str.startswith('/dev/vd')]
-    disk_size_info = selected_rows[['Size', 'Avail']]
+    disk_size_info = selected_rows[['Filesystem', 'Size', 'Avail', 'Mounted']]
     disk_size_info.loc[:, 'Size'] = disk_size_info['Size'].apply(convert_to_bytes)
     disk_size_info.loc[:, 'Avail'] = disk_size_info['Avail'].apply(convert_to_bytes)
+    disk_size_info = disk_size_info.copy()
+    disk_size_info['Type'] = disk_size_info['Filesystem'].apply(get_filesystem_type)
     # disk io info
-    disk_io_info = {'read_count' : 0, 'write_count' : 0}
+    disk_io_info = {}
     with open('/proc/diskstats', 'r') as file:
         for line in file:
             fields = line.strip().split()
             device_name = fields[2]
             if re.match(r'(sd[a-z]|nvme\d+n\d+|vd[a-z])$', device_name):
                 read_count = int(fields[3])
+                read_size = int(fields[5]) * 512
                 write_count = int(fields[7])
-                disk_io_info['read_count'] += read_count
-                disk_io_info['write_count'] += write_count 
+                write_size = int(fields[9]) * 512
+                disk_io_info[device_name] = {'read_count' : read_count, 'read_size' : read_size, 'write_count' : write_count, 'write_size' : write_size}
     # net info
-    net_info = {'receive_bytes' : 0, 'transmit_bytes' : 0}
+    net_info = {}
     with open('/proc/net/dev', 'r') as f:
         data = f.readlines()
         for line in data[2:]:
@@ -102,8 +118,7 @@ def get_node_info():
             interface = parts[0].strip(':')
             receive_bytes = int(parts[1])
             transmit_bytes = int(parts[9])
-            net_info['receive_bytes'] += receive_bytes
-            net_info['transmit_bytes'] += transmit_bytes
+            net_info[interface] = {'receive_bytes' : receive_bytes, 'transmit_bytes' : transmit_bytes}
     # proc info
     output_lines = os.popen("ps axo pid,rss,vsz,comm").read().split('\n')
     data = [line.split(maxsplit=3) for line in output_lines[1:] if line]
@@ -143,16 +158,21 @@ l3_size = Gauge('cache_L3_max_size_bype', 'L3 cache size')
 cpu_time = Counter('node_cpu_seconds_total', 'CPU idle time', ['mode'])
 procs_blocked_count = Gauge('node_procs_blocked', 'Procs blocked number')
 procs_running_count = Gauge('node_procs_running', 'Procs running number')
+procs_total_count = Gauge('node_procs_total', 'Procs total number')
+load_averange = Gauge('load_averange', 'Load Averange', ['time'])
 mem_buffer_size = Gauge('node_memory_Buffers_bytes', 'Memory buffers size')
 mem_cached_size = Gauge('node_memory_Cached_bytes', 'Memory cached size')
 mem_free_size = Gauge('node_memory_MemFree_bytes', 'Memory free size')
+mem_available_size = Gauge('node_memory_MemAvailable_bytes', 'Memory available size')
 mem_total_size = Gauge('node_memory_MemTotal_bytes', 'Memory total size')
-filesystem_avail_size = Gauge('node_filesystem_avail_bytes', 'Filesystem avail size')
-filesystem_size = Gauge('node_filesystem_size_bytes', 'Filesystem size')
-disk_reads_count = Counter('node_disk_reads_completed_total', 'Disk reads completed count')
-disk_writes_count = Counter('node_disk_writes_completed_total', 'Disk writes completed count')
-network_receive_size = Counter('node_network_receive_bytes_total', 'Network receive bytes')
-network_transmit_size = Counter('node_network_transmit_bytes_total', 'Network transmit bytes')
+filesystem_avail_size = Gauge('node_filesystem_avail_bytes', 'Filesystem avail size', ['device', 'fstype', 'mountpoint'])
+filesystem_size = Gauge('node_filesystem_size_bytes', 'Filesystem size', ['device', 'fstype', 'mountpoint'])
+disk_reads_count = Counter('node_disk_reads_completed_total', 'Disk reads completed count', ['device'])
+disk_reads_size = Counter('node_disk_read_bytes_total', 'Disk reads size', ['device'])
+disk_writes_count = Counter('node_disk_writes_completed_total', 'Disk writes completed count', ['device'])
+disk_writes_size = Counter('node_disk_write_bytes_total', 'Disk writes size', ['device'])
+network_receive_size = Counter('node_network_receive_bytes_total', 'Network receive bytes', ['device'])
+network_transmit_size = Counter('node_network_transmit_bytes_total', 'Network transmit bytes', ['device'])
 cache_L1_miss_rate = Gauge('cache_L1_miss_rate', 'Cache L1 miss rate')
 cache_L2_miss_rate = Gauge('cache_L2_miss_rate', 'Cache L2 miss rate')
 cache_L3_miss_rate = Gauge('cache_L3_miss_rate', 'Cache L3 miss rate')
@@ -163,34 +183,55 @@ cur_info = get_node_info()
 
 start_http_server(8000)
 cpu_time.labels(mode='all').inc(sum(cur_info.stat_info['cpu_time']))
+cpu_time.labels(mode='user').inc(cur_info.stat_info['cpu_time'][0])
+cpu_time.labels(mode='nice').inc(cur_info.stat_info['cpu_time'][1])
+cpu_time.labels(mode='system').inc(cur_info.stat_info['cpu_time'][2])
 cpu_time.labels(mode='idle').inc(cur_info.stat_info['cpu_time'][3])
-disk_reads_count.inc(cur_info.disk_io_info['read_count'])
-disk_writes_count.inc(cur_info.disk_io_info['write_count'])
-network_receive_size.inc(cur_info.net_info['receive_bytes'])
-network_transmit_size.inc(cur_info.net_info['transmit_bytes'])
-
+cpu_time.labels(mode='iowait').inc(cur_info.stat_info['cpu_time'][4])
+for key in cur_info.disk_io_info:
+    disk_reads_count.labels(device=key).inc(cur_info.disk_io_info[key]['read_count'])
+    disk_reads_size.labels(device=key).inc(cur_info.disk_io_info[key]['read_size'])
+    disk_writes_count.labels(device=key).inc(cur_info.disk_io_info[key]['write_count'])
+    disk_writes_size.labels(device=key).inc(cur_info.disk_io_info[key]['write_size'])
+for key in cur_info.net_info:
+    network_receive_size.labels(device=key).inc(cur_info.net_info[key]['receive_bytes'])
+    network_transmit_size.labels(device=key).inc(cur_info.net_info[key]['transmit_bytes'])
 while True:
     last_info = cur_info
     cur_info = get_node_info()
-    cpu_num.set(cur_info.cpu_info['cpu_num'])
-    core_num.set(cur_info.cpu_info['core_num'])
+    cpu_num.set(cur_info.cpu_info['socket_num'] * cur_info.cpu_info['corePerSocket'])
+    core_num.set(cur_info.cpu_info['socket_num'] * cur_info.cpu_info['corePerSocket'] * cur_info.cpu_info['threadPerCore'])
     l1_size.set(cur_info.cpu_info['l1i_size'] + cur_info.cpu_info['l1d_size'])
     l2_size.set(cur_info.cpu_info['l2_size'])
     l3_size.set(cur_info.cpu_info['l3_size'])
     cpu_time.labels(mode='all').inc(sum(cur_info.stat_info['cpu_time']) - sum(last_info.stat_info['cpu_time']))
+    cpu_time.labels(mode='user').inc(cur_info.stat_info['cpu_time'][0] - last_info.stat_info['cpu_time'][0])
+    cpu_time.labels(mode='nice').inc(cur_info.stat_info['cpu_time'][1] - last_info.stat_info['cpu_time'][1])
+    cpu_time.labels(mode='system').inc(cur_info.stat_info['cpu_time'][2] - last_info.stat_info['cpu_time'][2])
     cpu_time.labels(mode='idle').inc(cur_info.stat_info['cpu_time'][3] - last_info.stat_info['cpu_time'][3])
+    cpu_time.labels(mode='iowait').inc(cur_info.stat_info['cpu_time'][4] - last_info.stat_info['cpu_time'][4])
     procs_blocked_count.set(cur_info.stat_info['procs_blocked'])
     procs_running_count.set(cur_info.stat_info['procs_running'])
+    procs_total_count.set(cur_info.stat_info['procs_total'])
+    load_averange.labels(time='1').set(cur_info.stat_info['uptime_1'])
+    load_averange.labels(time='5').set(cur_info.stat_info['uptime_5'])
+    load_averange.labels(time='15').set(cur_info.stat_info['uptime_15'])
     mem_buffer_size.set(cur_info.mem_info['Buffers'])
     mem_cached_size.set(cur_info.mem_info['Cached'])
     mem_free_size.set(cur_info.mem_info['MemFree'])
+    mem_available_size.set(cur_info.mem_info['MemAvailable'])
     mem_total_size.set(cur_info.mem_info['MemTotal'])
-    filesystem_avail_size.set(cur_info.disk_size_info['Avail'].sum())
-    filesystem_size.set(cur_info.disk_size_info['Size'].sum())
-    disk_reads_count.inc(cur_info.disk_io_info['read_count'] - last_info.disk_io_info['read_count'])
-    disk_writes_count.inc(cur_info.disk_io_info['write_count'] - last_info.disk_io_info['write_count'])
-    network_receive_size.inc(cur_info.net_info['receive_bytes'] - last_info.net_info['receive_bytes'])
-    network_transmit_size.inc(cur_info.net_info['transmit_bytes'] - last_info.net_info['transmit_bytes'])
+    for index, row in cur_info.disk_size_info.iterrows():
+        filesystem_avail_size.labels(device=row['Filesystem'],fstype=row['Type'],mountpoint=row['Mounted']).set(row['Avail'])
+        filesystem_size.labels(device=row['Filesystem'],fstype=row['Type'],mountpoint=row['Mounted']).set(row['Size'])
+    for key in cur_info.disk_io_info:
+        disk_reads_count.labels(device=key).inc(cur_info.disk_io_info[key]['read_count'] - last_info.disk_io_info[key]['read_count'])
+        disk_reads_size.labels(device=key).inc(cur_info.disk_io_info[key]['read_size'] - last_info.disk_io_info[key]['read_size'])
+        disk_writes_count.labels(device=key).inc(cur_info.disk_io_info[key]['write_count'] - last_info.disk_io_info[key]['write_count'])
+        disk_writes_size.labels(device=key).inc(cur_info.disk_io_info[key]['write_size'] - last_info.disk_io_info[key]['write_size'])
+    for key in cur_info.net_info:
+        network_receive_size.labels(device=key).inc(cur_info.net_info[key]['receive_bytes'] - last_info.net_info[key]['receive_bytes'])
+        network_transmit_size.labels(device=key).inc(cur_info.net_info[key]['transmit_bytes'] - last_info.net_info[key]['transmit_bytes'])
     for index, row in cur_info.proc_info.iterrows():
         proc_vm_size.labels(pid=row['PID']).set(row['VSZ'])
     cache_L1_miss_rate.set(cur_info.perf_info['cache_L1_miss_rate'])
