@@ -76,9 +76,9 @@ def get_node_info():
                 stat_info['procs_blocked'] = int(line.split()[1])
         stat_info['procs_total'] = int(os.popen("ps -e | wc -l").read())
     output = os.popen("uptime").read().strip().split()
-    stat_info['uptime_1'] = float(output[7].replace(',',''))
-    stat_info['uptime_5'] = float(output[8].replace(',',''))
-    stat_info['uptime_15'] = float(output[9].replace(',',''))
+    stat_info['uptime_1'] = float(output[-3].replace(',',''))
+    stat_info['uptime_5'] = float(output[-2].replace(',',''))
+    stat_info['uptime_15'] = float(output[-1].replace(',',''))
     # mem info
     mem_info = {}
     with open('/proc/meminfo', 'r') as file:
