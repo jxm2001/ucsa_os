@@ -5,6 +5,15 @@ import time
 import re
 import subprocess
 import signal
+import sys
+
+arguments = sys.argv
+
+enablePerf=True
+for arg in arguments[1:]:
+    if arg.startswith("--perf="):
+        if arg.split("=")[1] == "off":
+            enablePerf=False
 
 class Node_Info:
     def __init__(self, cpu_info, stat_info, mem_info, disk_size_info, disk_io_info, net_info, proc_info, perf_info):
@@ -124,30 +133,37 @@ def get_node_info():
     data = [line.split(maxsplit=3) for line in output_lines[1:] if line]
     proc_info = pd.DataFrame(data, columns=["PID", "RSS", "VSZ", "COMMAND"])
     # perf info
-    try:
-        proc = subprocess.Popen(['perf', 'stat', '-M', 'Cache_Misses,CPI'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        time.sleep(1)
-        proc.send_signal(signal.SIGINT)
-        stdout, stderr = proc.communicate()
-        perf_output = stderr.decode()
-        for line in perf_output.split('\n'):
-            if "L1MPKI" in line:
-                l1mpki = float(line.split()[3])
-            elif "L2MPKI" in line and "PKI_All" not in line:
-                l2mpki = float(line.split()[3])
-            elif "L3MPKI" in line:
-                l3mpki = float(line.split()[3])
-            elif "CPI" in line:
-                cpi = float(line.split()[3])
-
+    if enablePerf:
+        try:
+            proc = subprocess.Popen(['perf', 'stat', '-M', 'Cache_Misses,CPI'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            time.sleep(1)
+            proc.send_signal(signal.SIGINT)
+            stdout, stderr = proc.communicate()
+            perf_output = stderr.decode()
+            for line in perf_output.split('\n'):
+                if "L1MPKI" in line:
+                    l1mpki = float(line.split()[3])
+                elif "L2MPKI" in line and "PKI_All" not in line:
+                    l2mpki = float(line.split()[3])
+                elif "L3MPKI" in line:
+                    l3mpki = float(line.split()[3])
+                elif "CPI" in line:
+                    cpi = float(line.split()[3])
+            perf_info = {
+                "cache_L1_miss_rate": l1mpki/1000,
+                "cache_L2_miss_rate": l2mpki/1000,
+                "cache_L3_miss_rate": l3mpki/1000,
+                "system_ipc": 1/cpi
+            }
+        except subprocess.CalledProcessError as e:
+            print("Error running perf stat:", e)
+    else:
         perf_info = {
-            "cache_L1_miss_rate": l1mpki/1000,
-            "cache_L2_miss_rate": l2mpki/1000,
-            "cache_L3_miss_rate": l3mpki/1000,
-            "system_ipc": 1/cpi
+            "cache_L1_miss_rate": 0.1,
+            "cache_L2_miss_rate": 0.05,
+            "cache_L3_miss_rate": 0.01,
+            "system_ipc": 0.25
         }
-    except subprocess.CalledProcessError as e:
-        print("Error running perf stat:", e)
     return Node_Info(cpu_info, stat_info, mem_info, disk_size_info, disk_io_info, net_info, proc_info, perf_info)
 
 cpu_num = Gauge('cpu_num', 'CPU Number')
