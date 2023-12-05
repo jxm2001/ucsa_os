@@ -16,13 +16,14 @@ for arg in arguments[1:]:
             enablePerf=False
 
 class Node_Info:
-    def __init__(self, cpu_info, stat_info, mem_info, disk_size_info, disk_io_info, net_info, proc_info, perf_info):
+    def __init__(self, cpu_info, stat_info, mem_info, disk_size_info, disk_io_info, netdev_info, netstat_info, proc_info, perf_info):
         self.cpu_info = cpu_info 
         self.stat_info = stat_info 
         self.mem_info = mem_info
         self.disk_size_info = disk_size_info
         self.disk_io_info = disk_io_info
-        self.net_info = net_info
+        self.netdev_info = netdev_info
+        self.netstat_info = netstat_info
         self.proc_info = proc_info
         self.perf_info = perf_info
 
@@ -55,6 +56,7 @@ def get_node_info():
     with os.popen("lscpu") as file:
         for line in file:
             line = line.strip()
+            pattern = r'(\d+)\s*(\w+)'
             if line.startswith('Thread(s)'):
                 cpu_info['threadPerCore'] = int(line.split(':')[1])
             elif line.startswith('Core(s)'):
@@ -62,17 +64,17 @@ def get_node_info():
             elif line.startswith('Socket(s)'):
                 cpu_info['socket_num'] = int(line.split(':')[1])
             elif line.startswith('L1d'):
-                parts = line.split()
-                cpu_info['l1d_size'] = int(parts[2]) * convert_unit_to_bytes(parts[3])
+                match = re.findall(pattern, line)[1]
+                cpu_info['l1d_size'] = int(match[0]) * convert_unit_to_bytes(match[1])
             elif line.startswith('L1i'):
-                parts = line.split()
-                cpu_info['l1i_size'] = int(parts[2]) * convert_unit_to_bytes(parts[3])
+                match = re.findall(pattern, line)[1]
+                cpu_info['l1i_size'] = int(match[0]) * convert_unit_to_bytes(match[1])
             elif line.startswith('L2'):
-                parts = line.split()
-                cpu_info['l2_size'] = int(parts[2]) * convert_unit_to_bytes(parts[3])
+                match = re.findall(pattern, line)[1]
+                cpu_info['l2_size'] = int(match[0]) * convert_unit_to_bytes(match[1])
             elif line.startswith('L3'):
-                parts = line.split()
-                cpu_info['l3_size'] = int(parts[2]) * convert_unit_to_bytes(parts[3])
+                match = re.findall(pattern, line)[1]
+                cpu_info['l3_size'] = int(match[0]) * convert_unit_to_bytes(match[1])
     # stat info
     stat_info = {}
     with open('/proc/stat', 'r') as file:
@@ -118,8 +120,8 @@ def get_node_info():
                 write_count = int(fields[7])
                 write_size = int(fields[9]) * 512
                 disk_io_info[device_name] = {'read_count' : read_count, 'read_size' : read_size, 'write_count' : write_count, 'write_size' : write_size}
-    # net info
-    net_info = {}
+    # netdev info
+    netdev_info = {}
     with open('/proc/net/dev', 'r') as f:
         data = f.readlines()
         for line in data[2:]:
@@ -127,7 +129,10 @@ def get_node_info():
             interface = parts[0].strip(':')
             receive_bytes = int(parts[1])
             transmit_bytes = int(parts[9])
-            net_info[interface] = {'receive_bytes' : receive_bytes, 'transmit_bytes' : transmit_bytes}
+            netdev_info[interface] = {'receive_bytes' : receive_bytes, 'transmit_bytes' : transmit_bytes}
+    # netstat info
+    netstat_info = {}
+    netstat_info['tcp_curr_estab'] = int(os.popen("cat /proc/net/snmp | awk 'NR==8 {print $10}'").read())
     # proc info
     output_lines = os.popen("ps axo pid,rss,vsz,comm").read().split('\n')
     data = [line.split(maxsplit=3) for line in output_lines[1:] if line]
@@ -164,7 +169,8 @@ def get_node_info():
             "cache_L3_miss_rate": 0.01,
             "system_ipc": 0.25
         }
-    return Node_Info(cpu_info, stat_info, mem_info, disk_size_info, disk_io_info, net_info, proc_info, perf_info)
+        time.sleep(1)
+    return Node_Info(cpu_info, stat_info, mem_info, disk_size_info, disk_io_info, netdev_info, netstat_info, proc_info, perf_info)
 
 cpu_num = Gauge('cpu_num', 'CPU Number')
 core_num = Gauge('core_num', 'Core Number')
@@ -189,6 +195,7 @@ disk_writes_count = Counter('node_disk_writes_completed_total', 'Disk writes com
 disk_writes_size = Counter('node_disk_write_bytes_total', 'Disk writes size', ['device'])
 network_receive_size = Counter('node_network_receive_bytes_total', 'Network receive bytes', ['device'])
 network_transmit_size = Counter('node_network_transmit_bytes_total', 'Network transmit bytes', ['device'])
+netstat_tcp_currestab = Gauge('node_netstat_Tcp_CurrEstab', 'Netstat TCP CurrEstab')
 cache_L1_miss_rate = Gauge('cache_L1_miss_rate', 'Cache L1 miss rate')
 cache_L2_miss_rate = Gauge('cache_L2_miss_rate', 'Cache L2 miss rate')
 cache_L3_miss_rate = Gauge('cache_L3_miss_rate', 'Cache L3 miss rate')
@@ -209,9 +216,9 @@ for key in cur_info.disk_io_info:
     disk_reads_size.labels(device=key).inc(cur_info.disk_io_info[key]['read_size'])
     disk_writes_count.labels(device=key).inc(cur_info.disk_io_info[key]['write_count'])
     disk_writes_size.labels(device=key).inc(cur_info.disk_io_info[key]['write_size'])
-for key in cur_info.net_info:
-    network_receive_size.labels(device=key).inc(cur_info.net_info[key]['receive_bytes'])
-    network_transmit_size.labels(device=key).inc(cur_info.net_info[key]['transmit_bytes'])
+for key in cur_info.netdev_info:
+    network_receive_size.labels(device=key).inc(cur_info.netdev_info[key]['receive_bytes'])
+    network_transmit_size.labels(device=key).inc(cur_info.netdev_info[key]['transmit_bytes'])
 while True:
     last_info = cur_info
     cur_info = get_node_info()
@@ -245,9 +252,10 @@ while True:
         disk_reads_size.labels(device=key).inc(cur_info.disk_io_info[key]['read_size'] - last_info.disk_io_info[key]['read_size'])
         disk_writes_count.labels(device=key).inc(cur_info.disk_io_info[key]['write_count'] - last_info.disk_io_info[key]['write_count'])
         disk_writes_size.labels(device=key).inc(cur_info.disk_io_info[key]['write_size'] - last_info.disk_io_info[key]['write_size'])
-    for key in cur_info.net_info:
-        network_receive_size.labels(device=key).inc(cur_info.net_info[key]['receive_bytes'] - last_info.net_info[key]['receive_bytes'])
-        network_transmit_size.labels(device=key).inc(cur_info.net_info[key]['transmit_bytes'] - last_info.net_info[key]['transmit_bytes'])
+    for key in cur_info.netdev_info:
+        network_receive_size.labels(device=key).inc(cur_info.netdev_info[key]['receive_bytes'] - last_info.netdev_info[key]['receive_bytes'])
+        network_transmit_size.labels(device=key).inc(cur_info.netdev_info[key]['transmit_bytes'] - last_info.netdev_info[key]['transmit_bytes'])
+    netstat_tcp_currestab.set(cur_info.netstat_info['tcp_curr_estab'])
     for index, row in cur_info.proc_info.iterrows():
         proc_vm_size.labels(pid=row['PID']).set(row['VSZ'])
     cache_L1_miss_rate.set(cur_info.perf_info['cache_L1_miss_rate'])
