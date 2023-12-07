@@ -4034,7 +4034,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Read bytes 每个磁盘分区每秒读取的比特数\nWritten bytes 每个磁盘分区每秒写入的比特数",
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -4225,7 +4225,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Reads completed: 每个磁盘分区每秒读完成次数\n\nWrites completed: 每个磁盘分区每秒写完成次数\n\nIO now 每个磁盘分区每秒正在处理的输入/输出请求数",
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -4538,7 +4538,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Sockets_used - 已使用的所有协议套接字总量\n\nCurrEstab - 当前状态为 ESTABLISHED 或 CLOSE-WAIT 的 TCP 连接数\n\nTCP_alloc - 已分配（已建立、已申请到sk_buff）的TCP套接字数量\n\nTCP_tw - 等待关闭的TCP连接数\n\nUDP_inuse - 正在使用的 UDP 套接字数量\n\nRetransSegs - TCP 重传报文数\n\nOutSegs - TCP 发送的报文数\n\nInSegs - TCP 接收的报文数",
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -4740,13 +4740,13 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "node_netstat_Tcp_CurrEstab{instance=~\"$instance:.+\"}",
+          "expr": "node_netstat_Tcp_CurrEstab{instance=~\"$instance:.+\"} + 0",
           "format": "time_series",
           "hide": false,
           "instant": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "CurrEstab",
+          "legendFormat": "TCP连接数",
           "refId": "A",
           "step": 20
         },
@@ -4810,7 +4810,7 @@
           },
           "editorMode": "code",
           "expr": "rate(node_netstat_Tcp_PassiveOpens{instance=~\"$instance:.+\"}[$interval])",
-          "hide": true,
+          "hide": false,
           "interval": "",
           "legendFormat": "{{instance}}_Tcp_PassiveOpens",
           "range": true,
@@ -4823,7 +4823,7 @@
           },
           "editorMode": "code",
           "expr": "rate(node_netstat_Tcp_ActiveOpens{instance=~\"$instance:.+\"}[$interval])",
-          "hide": true,
+          "hide": false,
           "interval": "",
           "legendFormat": "{{instance}}_Tcp_ActiveOpens",
           "range": true,
@@ -4873,7 +4873,7 @@
           },
           "editorMode": "code",
           "expr": "rate(node_netstat_TcpExt_ListenDrops{instance=~\"$instance:.+\"}[$interval])",
-          "hide": true,
+          "hide": false,
           "interval": "",
           "legendFormat": "",
           "range": true,
@@ -5062,7 +5062,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "#rate(node_network_receive_bytes_total{instance=~\"$instance:.+\",device=~\"$device\"}[$interval])*8\r\nrate(node_network_receive_bytes_total{instance=~\"$instance:.+\"}[$interval])*8-0",
+          "expr": "#rate(node_network_receive_bytes_total{instance=~\"$instance:.+\",device=~\"$device\"}[$interval])*8\r\nrate(node_network_receive_bytes_total{instance=~\"$instance:.+\"}[$interval])*8 - 0",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -5077,7 +5077,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "#rate(node_network_transmit_bytes_total{instance=~\"$instance:.+\",device=~\"$device\"}[$interval])*8\r\nrate(node_network_receive_bytes_total{instance=~\"$instance:.+\"}[$interval])*8",
+          "expr": "#rate(node_network_transmit_bytes_total{instance=~\"$instance:.+\",device=~\"$device\"}[$interval])*8\r\nrate(node_network_receive_bytes_total{instance=~\"$instance:.+\"}[$interval])*8 + 0",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -5759,7 +5759,7 @@
         "auto_count": 100,
         "auto_min": "10s",
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "30s",
           "value": "30s"
         },
@@ -5942,6 +5942,6 @@
   "timezone": "browser",
   "title": "os-1",
   "uid": "os_work-1",
-  "version": 7,
+  "version": 8,
   "weekStart": ""
 }
