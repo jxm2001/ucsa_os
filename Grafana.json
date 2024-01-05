@@ -859,7 +859,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum(\r\n    (\r\n        node_filesystem_size_bytes{fstype!=\"\"}#vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",name=~\".*$sname.*\",fstype=~\"ext.?|xfs\"}\r\n        -\r\n        node_filesystem_avail_bytes{fstype!=\"\"}#vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",name=~\".*$sname.*\",fstype=~\"ext.?|xfs\"}\r\n    ) \r\n    *\r\n        100\r\n    /\r\n        node_filesystem_size_bytes{fstype!=\"\"}#vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",name=~\".*$sname.*\",fstype=~\"ext.?|xfs\"}\r\n)\r\n    by(instance)",
+          "expr": "\r\n    sum(\r\n        node_filesystem_size_bytes{fstype!=\"\"}#vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",name=~\".*$sname.*\",fstype=~\"ext.?|xfs\"}\r\n        -\r\n        node_filesystem_avail_bytes{fstype!=\"\"}#vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",name=~\".*$sname.*\",fstype=~\"ext.?|xfs\"}\r\n    )by (instance) \r\n    *\r\n        100\r\n    /\r\n        sum(node_filesystem_size_bytes{fstype!=\"\"}#vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",name=~\".*$sname.*\",fstype=~\"ext.?|xfs\"}\r\n    )\r\n    by(instance)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1414,7 +1414,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "#sum(cpu_num{vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",name=~\".*$sname.*\"})\r\nsum(cpu_num{instance=~\"$instance.*\"})",
+          "expr": "sum(cpu_num{instance=~\"$instance.*\"})",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -2065,7 +2065,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "#(1 - ((sum(increase(node_cpu_seconds_total{instance=~\"$instance:.+\",mode=\"idle\"}[$interval])) by (instance)) / (sum(increase(node_cpu_seconds_total{instance=~\"$instance:.+\",mode=\"all\"}[$interval])) by (instance))) )*100\r\n\r\n(1 - avg(rate(node_cpu_seconds_total{instance=~\"$instance.*\",mode=\"idle\"}[$interval])) by (instance) / avg(rate(node_cpu_seconds_total{instance=~\"$instance.*\", mode=\"all\"}[$interval])) by (instance)) * 100+0",
+          "expr": "(1 - avg(rate(node_cpu_seconds_total{instance=~\"$instance.*\",mode=\"idle\"}[$interval])) by (instance) / avg(rate(node_cpu_seconds_total{instance=~\"$instance.*\", mode=\"all\"}[$interval])) by (instance)) * 100+0",
           "instant": false,
           "interval": "",
           "legendFormat": "CPU使用率",
@@ -2079,7 +2079,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "#(1 - ((sum(increase(node_cpu_seconds_total{instance=~\"$instance:.+\",mode=\"iowait\"}[$interval])) by (instance)) / (sum(increase(node_cpu_seconds_total{instance=~\"$instance:.+\",mode=\"all\"}[$interval])) by (instance))) )*100\r\n(sum by (instance)(increase(node_cpu_seconds_total{instance=~\"$instance.*\",mode=\"iowait\"}[$interval])))/(sum by (instance)(increase(node_cpu_seconds_total{instance=~\"$instance.*\",mode=\"all\"}[$interval])))+0",
+          "expr": "(sum by (instance)(increase(node_cpu_seconds_total{instance=~\"$instance.*\",mode=\"iowait\"}[$interval])))/(sum by (instance)(increase(node_cpu_seconds_total{instance=~\"$instance.*\",mode=\"all\"}[$interval])))+0",
           "hide": true,
           "instant": true,
           "interval": "",
@@ -2093,7 +2093,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "#(1 - (node_memory_MemFree_bytes{instance=~\"$instance:.+\"} / (node_memory_MemTotal_bytes{instance=~\"$instance:.+\"})))* 100\r\n\r\n(1 - (node_memory_MemFree_bytes{instance=~\"$instance.*\"} / (node_memory_MemTotal_bytes{instance=~\"$instance.*\"})))* 100+0",
+          "expr": "(1 - (node_memory_MemFree_bytes{instance=~\"$instance.*\"} / (node_memory_MemTotal_bytes{instance=~\"$instance.*\"})))* 100+0",
           "instant": true,
           "interval": "",
           "legendFormat": "内存使用率",
@@ -2106,7 +2106,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "#(node_filesystem_size_bytes{instance=~\"$instance:.+\",fstype=~\"ext.*|xfs\",mountpoint=\"$maxmount\"}-node_filesystem_avail_bytes{instance=~\"$instance:.+\",fstype=~\"ext.*|xfs\",mountpoint=\"$maxmount\"})*100 /(node_filesystem_size_bytes{instance=~\"$instance:.+\",fstype=~\"ext.*|xfs\",mountpoint=\"$maxmount\"})\r\n(node_filesystem_size_bytes{instance=~\"$instance.*\",fstype!=\"\"}-node_filesystem_avail_bytes{instance=~\"$instance.*\",fstype!=\"\"})*100 /(node_filesystem_size_bytes{instance=~\"$instance.*\",fstype!=\"\"})+0",
+          "expr": "(node_filesystem_size_bytes{instance=~\"$instance.*\",fstype!=\"\"}-node_filesystem_avail_bytes{instance=~\"$instance.*\",fstype!=\"\"})*100 /(node_filesystem_size_bytes{instance=~\"$instance.*\",fstype!=\"\"})+0",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -2158,7 +2158,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 80
+                "value": 104
               }
             ]
           },
@@ -2275,7 +2275,7 @@
               },
               {
                 "id": "custom.width",
-                "value": 107
+                "value": 109
               }
             ]
           },
@@ -2335,7 +2335,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "#node_filesystem_size_bytes{instance=~\"$instance:.+\",fstype=~\"ext.*|xfs|nfs\",mountpoint !~\".*pod.*\"}-0\r\n#node_filesystem_size_bytes{instance=~\"$instance.*\",mountpoint !~\".*pod.*\"}-0\r\nnode_filesystem_size_bytes{instance=~\"$instance:.+\", fstype!=\"\"}-0",
+          "expr": "node_filesystem_size_bytes{instance=~\"$instance:.+\", fstype!=\"\"}-0",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -2351,7 +2351,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "#node_filesystem_avail_bytes{instance=~\"$instance.*\",fstype=~\"ext.*|xfs|nfs\",mountpoint !~\".*pod.*\"}-0\r\n#node_filesystem_avail_bytes{instance=~\"$instance:.+\",mountpoint !~\".*pod.*\"}-0\r\nnode_filesystem_avail_bytes{instance=~\"$instance:.+\", fstype!=\"\"}-0",
+          "expr": "node_filesystem_avail_bytes{instance=~\"$instance:.+\", fstype!=\"\"}-0",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -2367,7 +2367,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "(node_filesystem_size_bytes{instance=~\"$instance.*\",fstype=~\"ext.*|xfs|nfs\",mountpoint !~\".*pod.*\"}-node_filesystem_avail_bytes{instance=~\"$instance.*\",fstype=~\"ext.*|xfs|nfs\",mountpoint !~\".*pod.*\"}) *100/(node_filesystem_size_bytes{instance=~\"$instance.*\",fstype=~\"ext.*|xfs|nfs\",mountpoint !~\".*pod.*\"})\r\n#(node_filesystem_size_bytes{instance=~\"$instance:.+\",mountpoint !~\".*pod.*\"}-node_filesystem_avail_bytes{instance=~\"$instance:.+\",mountpoint !~\".*pod.*\"}) *100/(node_filesystem_size_bytes{instance=~\"$instance:.+\",mountpoint !~\".*pod.*\"})",
+          "expr": "(node_filesystem_size_bytes{instance=~\"$instance.*\",fstype=~\"ext.*|xfs|nfs\",mountpoint !~\".*pod.*\"}-node_filesystem_avail_bytes{instance=~\"$instance.*\",fstype=~\"ext.*|xfs|nfs\",mountpoint !~\".*pod.*\"}) *100/(node_filesystem_size_bytes{instance=~\"$instance.*\",fstype=~\"ext.*|xfs|nfs\",mountpoint !~\".*pod.*\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -3980,20 +3980,6 @@
           "intervalFactor": 1,
           "legendFormat": "容量%：{{mountpoint}}",
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "1 - node_filesystem_files_free{instance=~\"$instance:.+\",fstype=~\"ext.?|xfs\"} / node_filesystem_files{instance=~\"$instance:.+\",fstype=~\"ext.?|xfs\"}",
-          "hide": true,
-          "interval": "",
-          "legendFormat": "Inodes%：{{mountpoint}}",
-          "range": true,
-          "refId": "B"
         }
       ],
       "thresholds": [],
@@ -5942,6 +5928,6 @@
   "timezone": "browser",
   "title": "os-1",
   "uid": "os_work-1",
-  "version": 8,
+  "version": 3,
   "weekStart": ""
 }
