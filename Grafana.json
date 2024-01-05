@@ -3715,7 +3715,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -4063,7 +4064,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -4269,7 +4271,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -4476,7 +4479,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -4596,7 +4600,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -4945,7 +4950,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -5087,7 +5093,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           },
@@ -5106,7 +5113,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "red"
+                      "color": "red",
+                      "value": null
                     },
                     {
                       "color": "orange",
@@ -5157,7 +5165,8 @@
                   "mode": "percentage",
                   "steps": [
                     {
-                      "color": "green"
+                      "color": "green",
+                      "value": null
                     },
                     {
                       "color": "orange",
@@ -5192,7 +5201,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "red"
+                      "color": "red",
+                      "value": null
                     },
                     {
                       "color": "orange",
@@ -5223,7 +5233,8 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "red"
+                      "color": "red",
+                      "value": null
                     },
                     {
                       "color": "orange",
@@ -5448,7 +5459,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -5645,7 +5657,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -5734,7 +5747,7 @@
         "auto_count": 100,
         "auto_min": "10s",
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "30s",
           "value": "30s"
         },
@@ -5783,107 +5796,6 @@
         "refresh": 2,
         "skipUrlSync": false,
         "type": "interval"
-      },
-      {
-        "current": {},
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
-        },
-        "definition": "query_result(topk(1,sort_desc (max(node_filesystem_size_bytes{vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",instance=~\"$instance:.+\",fstype=~\"ext.?|xfs\",mountpoint!~\".*pods.*\"}) by (mountpoint))))",
-        "hide": 2,
-        "includeAll": false,
-        "label": "最大挂载目录",
-        "multi": false,
-        "name": "maxmount",
-        "options": [],
-        "query": {
-          "query": "query_result(topk(1,sort_desc (max(node_filesystem_size_bytes{vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",instance=~\"$instance:.+\",fstype=~\"ext.?|xfs\",mountpoint!~\".*pods.*\"}) by (mountpoint))))",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": "/.*\\\"(.*)\\\".*/",
-        "skipUrlSync": false,
-        "sort": 5,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "current": {},
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
-        },
-        "definition": "label_values(node_uname_info{vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",instance=~\"$instance:.+\"}, name)",
-        "hide": 2,
-        "includeAll": false,
-        "label": "展示使用的名称",
-        "multi": false,
-        "name": "show_name",
-        "options": [],
-        "query": {
-          "query": "label_values(node_uname_info{vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",instance=~\"$instance:.+\"}, name)",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 5,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allFormat": "glob",
-        "current": {},
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
-        },
-        "definition": "label_values(node_uname_info{vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\"},iid)",
-        "hide": 2,
-        "includeAll": false,
-        "label": "实例ID",
-        "multi": false,
-        "multiFormat": "regex values",
-        "name": "iid",
-        "options": [],
-        "query": {
-          "query": "label_values(node_uname_info{vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\"},iid)",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 5,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "current": {
-          "selected": true,
-          "text": "",
-          "value": ""
-        },
-        "description": "总览表名称字段支持筛选，可以使用正则，如：.*aa.*bb.*",
-        "hide": 0,
-        "label": "查询",
-        "name": "sname",
-        "options": [
-          {
-            "selected": true,
-            "text": "",
-            "value": ""
-          }
-        ],
-        "query": "",
-        "skipUrlSync": false,
-        "type": "textbox"
       }
     ]
   },
@@ -5917,6 +5829,6 @@
   "timezone": "browser",
   "title": "os-1",
   "uid": "os_work-1",
-  "version": 7,
+  "version": 2,
   "weekStart": ""
 }
