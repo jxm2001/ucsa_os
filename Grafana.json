@@ -1414,7 +1414,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(cpu_num{instance=~\"$instance.*\"})",
+          "expr": "sum(cpu_num)",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -1430,7 +1430,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(load_averange{instance=~\"$instance.*\",time=\"1\"})",
+          "expr": "sum(load_averange{time=\"1\"})",
           "hide": false,
           "instant": false,
           "legendFormat": "总1分钟负载",
@@ -1444,7 +1444,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(load_averange{instance=~\"$instance.*\",time=\"5\"})",
+          "expr": "sum(load_averange{time=\"5\"})",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -1461,7 +1461,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(load_averange{instance=~\"$instance.*\",time=\"15\"})",
+          "expr": "sum(load_averange{time=\"15\"})",
           "hide": false,
           "instant": false,
           "legendFormat": "总15分钟负载",
@@ -1475,7 +1475,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "(1-(avg(increase(node_cpu_seconds_total{instance=~\"$instance.*\",mode=\"idle\"}[$interval])) by (instance) / avg(increase(node_cpu_seconds_total{instance=~\"$instance.*\",mode=\"all\"}[$interval])) by (instance))) * 100",
+          "expr": "(1-(avg(increase(node_cpu_seconds_total{mode=\"idle\"}[$interval]))  / avg(increase(node_cpu_seconds_total{mode=\"all\"}[$interval])))) * 100",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -1749,7 +1749,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(node_memory_MemTotal_bytes{instance=~\"$instance.*\"})",
+          "expr": "sum(node_memory_MemTotal_bytes)",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -1766,7 +1766,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(node_memory_MemTotal_bytes{instance=~\"$instance.*\"} - node_memory_MemFree_bytes{instance=~\"$instance.*\"})",
+          "expr": "sum(node_memory_MemTotal_bytes - node_memory_MemFree_bytes)",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -1783,7 +1783,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "(sum(node_memory_MemTotal_bytes{instance=~\"$instance.*\"} - node_memory_MemFree_bytes{instance=~\"$instance.*\"}) / sum(node_memory_MemTotal_bytes{instance=~\"$instance.*\"}))*100",
+          "expr": "(sum(node_memory_MemTotal_bytes - node_memory_MemFree_bytes) / sum(node_memory_MemTotal_bytes))*100",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -1930,7 +1930,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(avg(node_filesystem_size_bytes{instance=~\"$instance.*\"})by(device,instance))",
+          "expr": "sum(node_filesystem_size_bytes{fstype!=\"\"})",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -1945,7 +1945,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(avg(node_filesystem_size_bytes{instance=~\"$instance.*\"})by(device,instance)) - sum(avg(node_filesystem_avail_bytes{instance=~\"$instance.*\"})by(device,instance))",
+          "expr": "sum(node_filesystem_size_bytes{fstype!=\"\"}) - sum(node_filesystem_avail_bytes{fstype!=\"\"})",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -1960,7 +1960,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "(1-sum(avg(node_filesystem_avail_bytes{instance=~\"$instance.*\"})by(device,instance)) / sum(avg(node_filesystem_size_bytes{instance=~\"$instance.*\"})by(device,instance))) * 100",
+          "expr": "(1-sum(node_filesystem_avail_bytes{fstype!=\"\"}) / sum(node_filesystem_size_bytes{fstype!=\"\"})) * 100",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -3715,8 +3715,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -4064,8 +4063,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -4076,21 +4074,6 @@
           "unit": "Bps"
         },
         "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "vda_write"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#6ED0E0",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
           {
             "matcher": {
               "id": "byRegexp",
@@ -4139,6 +4122,36 @@
                   "legend": false,
                   "tooltip": false,
                   "viz": false
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/.*_写入$/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/.*_读取$/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
                 }
               }
             ]
@@ -4256,8 +4269,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -4268,21 +4280,6 @@
           "unit": "none"
         },
         "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "vda_write"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#6ED0E0",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
           {
             "matcher": {
               "id": "byRegexp",
@@ -4331,6 +4328,38 @@
                   "legend": false,
                   "tooltip": false,
                   "viz": false
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/.*_读取$/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed",
+                  "seriesBy": "max"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/.*_写入$/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed",
+                  "seriesBy": "min"
                 }
               }
             ]
@@ -4447,8 +4476,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -4489,7 +4517,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "#increase(node_network_receive_bytes_total{instance=~\"$instance:.+\",device=~\"$device\"}[1m])\r\nincrease(node_network_receive_bytes_total{instance=~\"$instance:.+\"}[1m])",
+          "expr": "increase(node_network_receive_bytes_total{instance=~\"$instance:.+\"}[1m])",
           "interval": "1m",
           "intervalFactor": 2,
           "legendFormat": "{{device}}_下载",
@@ -4506,7 +4534,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "#increase(node_network_transmit_bytes_total{instance=~\"$instance:.+\",device=~\"$device\"}[1m])\r\nincrease(node_network_transmit_bytes_total{instance=~\"$instance:.+\"}[1m])",
+          "expr": "increase(node_network_transmit_bytes_total{instance=~\"$instance:.+\"}[1m])",
           "hide": false,
           "interval": "1m",
           "intervalFactor": 2,
@@ -4568,8 +4596,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -4918,8 +4945,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -4932,38 +4958,8 @@
         "overrides": [
           {
             "matcher": {
-              "id": "byName",
-              "options": "192.168.10.227:9100_em1_in下载"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "super-light-green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "192.168.10.227:9100_em1_out上传"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "dark-blue",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
               "id": "byRegexp",
-              "options": "/.*_out上传$/"
+              "options": "/.*_上传$/"
             },
             "properties": [
               {
@@ -5048,7 +5044,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "#rate(node_network_receive_bytes_total{instance=~\"$instance:.+\",device=~\"$device\"}[$interval])*8\r\nrate(node_network_receive_bytes_total{instance=~\"$instance:.+\"}[$interval])*8 - 0",
+          "expr": "rate(node_network_receive_bytes_total{instance=~\"$instance:.+\"}[$interval])*8 - 0",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -5063,7 +5059,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "#rate(node_network_transmit_bytes_total{instance=~\"$instance:.+\",device=~\"$device\"}[$interval])*8\r\nrate(node_network_receive_bytes_total{instance=~\"$instance:.+\"}[$interval])*8 + 0",
+          "expr": "rate(node_network_receive_bytes_total{instance=~\"$instance:.+\"}[$interval])*8 + 0",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -5091,8 +5087,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           },
@@ -5111,8 +5106,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "red",
-                      "value": null
+                      "color": "red"
                     },
                     {
                       "color": "orange",
@@ -5163,8 +5157,7 @@
                   "mode": "percentage",
                   "steps": [
                     {
-                      "color": "green",
-                      "value": null
+                      "color": "green"
                     },
                     {
                       "color": "orange",
@@ -5199,8 +5192,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "red",
-                      "value": null
+                      "color": "red"
                     },
                     {
                       "color": "orange",
@@ -5231,8 +5223,7 @@
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "red",
-                      "value": null
+                      "color": "red"
                     },
                     {
                       "color": "orange",
@@ -5457,8 +5448,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -5655,8 +5645,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -5745,7 +5734,7 @@
         "auto_count": 100,
         "auto_min": "10s",
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "30s",
           "value": "30s"
         },
@@ -5877,7 +5866,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "",
           "value": ""
         },
@@ -5928,6 +5917,6 @@
   "timezone": "browser",
   "title": "os-1",
   "uid": "os_work-1",
-  "version": 3,
+  "version": 7,
   "weekStart": ""
 }
