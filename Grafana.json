@@ -109,7 +109,7 @@
           "refId": "A"
         }
       ],
-      "title": "资源总览：（当前选中主机：$instance）",
+      "title": "资源总览：",
       "type": "row"
     },
     {
@@ -421,12 +421,12 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "总核数"
+              "options": "总线程数"
             },
             "properties": [
               {
                 "id": "custom.width",
-                "value": 51
+                "value": 85
               },
               {
                 "id": "decimals",
@@ -658,7 +658,7 @@
           "hide": false,
           "instant": true,
           "interval": "",
-          "legendFormat": "总核数",
+          "legendFormat": "总线程数",
           "refId": "C"
         },
         {
@@ -728,7 +728,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "# max(rate(node_disk_read_bytes_total{vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",name=~\".*$sname.*\"}[$interval])) by (instance)\r\nsum by (instance)(rate(node_disk_read_bytes_total[$interval]))",
+          "expr": "sum by (instance)(rate(node_disk_read_bytes_total[$interval]))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -743,7 +743,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "#max(rate(node_disk_written_bytes_total{vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",name=~\".*$sname.*\"}[$interval])) by (instance)\r\nsum by (instance)(rate(node_disk_write_bytes_total[$interval]))",
+          "expr": "sum by (instance)(rate(node_disk_write_bytes_total[$interval]))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -773,22 +773,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "node_sockstat_TCP_tw{vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",name=~\".*$sname.*\"} - 0",
-          "format": "table",
-          "hide": true,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "TIME_WAIT",
-          "refId": "N"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "#max(rate(node_network_receive_bytes_total{vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",name=~\".*$sname.*\"}[$interval])*8) by (instance)\r\nsum by (instance) (irate(node_network_receive_bytes_total{}[$interval]))",
+          "expr": "sum by (instance) (irate(node_network_receive_bytes_total{}[$interval]))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -803,28 +788,13 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "#max(rate(node_network_transmit_bytes_total{vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",name=~\".*$sname.*\"}[$interval])*8) by (instance)\r\nsum by (instance) (irate(node_network_transmit_bytes_total{}[$interval])) ",
+          "expr": "sum by (instance) (irate(node_network_transmit_bytes_total{}[$interval])) ",
           "format": "table",
           "hide": false,
           "instant": true,
           "interval": "",
           "legendFormat": "上传带宽",
           "refId": "K"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "max(rate(node_disk_io_time_seconds_total{vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",name=~\".*$sname.*\"}[$interval])) by (instance) *100",
-          "format": "table",
-          "hide": true,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "__auto",
-          "refId": "P"
         }
       ],
       "title": "服务器资源总览表",
@@ -872,7 +842,7 @@
             },
             "renameByName": {
               "Value #B": "内存",
-              "Value #C": "总核数",
+              "Value #C": "总线程数",
               "Value #D": "启动(天)",
               "Value #E": "分区使用率*",
               "Value #F": "CPU使用率",
@@ -1549,7 +1519,7 @@
           "refId": "A"
         }
       ],
-      "title": "资源明细：【$instance】",
+      "title": "资源明细：（当前选中主机：$instance）",
       "type": "row"
     },
     {
@@ -2367,201 +2337,6 @@
           "unit": "percent"
         },
         "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "192.168.200.241:9100_Total"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "dark-red",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Idle - Waiting for something to happen"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#052B51",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "guest"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#9AC48A",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "idle"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#052B51",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "iowait"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#EAB839",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "irq"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#BF1B00",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "nice"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#C15C17",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "sdb_每秒I/O操作%"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#d683ce",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "softirq"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#E24D42",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "steal"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#FCE2DE",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "system"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#508642",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "user"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#5195CE",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "磁盘花费在I/O操作占比"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#ba43a9",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
           {
             "matcher": {
               "id": "byRegexp",
@@ -4911,7 +4686,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "auto",
+  "refresh": "5s",
   "schemaVersion": 38,
   "tags": [
     "Prometheus"
@@ -5034,6 +4809,6 @@
   "timezone": "browser",
   "title": "os-1",
   "uid": "os_work-1",
-  "version": 7,
+  "version": 3,
   "weekStart": ""
 }
