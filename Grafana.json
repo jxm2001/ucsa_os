@@ -4686,7 +4686,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "5s",
+  "refresh": "auto",
   "schemaVersion": 38,
   "tags": [
     "Prometheus"
@@ -4809,6 +4809,6 @@
   "timezone": "browser",
   "title": "os-1",
   "uid": "os_work-1",
-  "version": 3,
+  "version": 4,
   "weekStart": ""
 }
