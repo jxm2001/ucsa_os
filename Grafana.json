@@ -3074,7 +3074,7 @@
         ]
       },
       "gridPos": {
-        "h": 8,
+        "h": 11,
         "w": 8,
         "x": 0,
         "y": 24
@@ -3197,7 +3197,7 @@
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 11,
         "w": 8,
         "x": 8,
         "y": 24
@@ -3408,7 +3408,7 @@
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 22,
         "w": 8,
         "x": 16,
         "y": 24
@@ -3553,10 +3553,10 @@
       "fillGradient": 1,
       "grid": {},
       "gridPos": {
-        "h": 8,
+        "h": 11,
         "w": 8,
         "x": 0,
-        "y": 32
+        "y": 35
       },
       "height": "300",
       "hiddenSeries": false,
@@ -3800,10 +3800,10 @@
         ]
       },
       "gridPos": {
-        "h": 8,
+        "h": 11,
         "w": 8,
         "x": 8,
-        "y": 32
+        "y": 35
       },
       "id": 202,
       "links": [],
@@ -3919,10 +3919,10 @@
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 10,
         "w": 8,
-        "x": 16,
-        "y": 32
+        "x": 0,
+        "y": 46
       },
       "hiddenSeries": false,
       "id": 174,
@@ -4161,10 +4161,10 @@
         ]
       },
       "gridPos": {
-        "h": 8,
+        "h": 10,
         "w": 8,
-        "x": 0,
-        "y": 40
+        "x": 8,
+        "y": 46
       },
       "id": 168,
       "links": [],
@@ -4370,10 +4370,10 @@
         ]
       },
       "gridPos": {
-        "h": 8,
+        "h": 10,
         "w": 8,
-        "x": 8,
-        "y": 40
+        "x": 16,
+        "y": 46
       },
       "id": 161,
       "links": [],
@@ -4429,126 +4429,6 @@
         }
       ],
       "title": "【$instance】磁盘读写速率（IOPS）",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "links": [],
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 40
-      },
-      "id": 183,
-      "links": [],
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.2.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "increase(node_network_receive_bytes_total{instance=~\"$instance:.+\"}[1m])",
-          "interval": "1m",
-          "intervalFactor": 2,
-          "legendFormat": "{{device}}_下载",
-          "metric": "",
-          "range": true,
-          "refId": "A",
-          "step": 600,
-          "target": ""
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "increase(node_network_transmit_bytes_total{instance=~\"$instance:.+\"}[1m])",
-          "hide": false,
-          "interval": "1m",
-          "intervalFactor": 2,
-          "legendFormat": "{{device}}_上传",
-          "range": true,
-          "refId": "B",
-          "step": 600
-        }
-      ],
-      "title": "【$instance】每分钟流量",
       "type": "timeseries"
     },
     {
@@ -4615,22 +4495,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "192.168.200.241:9100_TCP_alloc"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "semi-dark-blue",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "TCP"
+              "options": "TCP连接数"
             },
             "properties": [
               {
@@ -4639,48 +4504,6 @@
                   "fixedColor": "#6ED0E0",
                   "mode": "fixed"
                 }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "TCP_alloc"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "blue",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/.*Sockets_used/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#E02F44",
-                  "mode": "fixed"
-                }
-              },
-              {
-                "id": "custom.drawStyle",
-                "value": "line"
-              },
-              {
-                "id": "custom.lineWidth",
-                "value": 2
-              },
-              {
-                "id": "custom.axisLabel",
-                "value": "已使用的所有协议套接字总量"
               }
             ]
           },
@@ -4728,9 +4551,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 10,
+        "w": 8,
         "x": 0,
-        "y": 48
+        "y": 56
       },
       "id": 158,
       "interval": "",
@@ -4767,135 +4590,6 @@
           "legendFormat": "TCP连接数",
           "refId": "A",
           "step": 20
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "node_sockstat_TCP_tw{instance=~\"$instance:.+\"}",
-          "format": "time_series",
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "TCP_tw",
-          "range": true,
-          "refId": "D"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "node_sockstat_sockets_used{instance=~\"$instance:.+\"}",
-          "hide": false,
-          "interval": "2m",
-          "intervalFactor": 1,
-          "legendFormat": "Sockets_used",
-          "range": true,
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "node_sockstat_UDP_inuse{instance=~\"$instance:.+\"}",
-          "interval": "",
-          "legendFormat": "UDP_inuse",
-          "range": true,
-          "refId": "C"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "node_sockstat_TCP_alloc{instance=~\"$instance:.+\"}",
-          "interval": "",
-          "legendFormat": "TCP_alloc",
-          "range": true,
-          "refId": "E"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "rate(node_netstat_Tcp_PassiveOpens{instance=~\"$instance:.+\"}[$interval])",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{instance}}_Tcp_PassiveOpens",
-          "range": true,
-          "refId": "G"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "rate(node_netstat_Tcp_ActiveOpens{instance=~\"$instance:.+\"}[$interval])",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{instance}}_Tcp_ActiveOpens",
-          "range": true,
-          "refId": "F"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "rate(node_netstat_Tcp_InSegs{instance=~\"$instance:.+\"}[$interval])",
-          "interval": "",
-          "legendFormat": "Tcp_InSegs",
-          "range": true,
-          "refId": "H"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "rate(node_netstat_Tcp_OutSegs{instance=~\"$instance:.+\"}[$interval])",
-          "interval": "",
-          "legendFormat": "Tcp_OutSegs",
-          "range": true,
-          "refId": "I"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "rate(node_netstat_Tcp_RetransSegs{instance=~\"$instance:.+\"}[$interval])",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "Tcp_RetransSegs",
-          "range": true,
-          "refId": "J"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "rate(node_netstat_TcpExt_ListenDrops{instance=~\"$instance:.+\"}[$interval])",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "",
-          "range": true,
-          "refId": "K"
         }
       ],
       "title": "【$instance】网络Socket连接信息",
@@ -5018,9 +4712,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 14,
-        "x": 10,
-        "y": 48
+        "w": 8,
+        "x": 8,
+        "y": 56
       },
       "id": 157,
       "links": [],
@@ -5076,6 +4770,126 @@
         }
       ],
       "title": "【$instance】网络带宽",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 56
+      },
+      "id": 183,
+      "links": [],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "increase(node_network_receive_bytes_total{instance=~\"$instance:.+\"}[1m])",
+          "interval": "1m",
+          "intervalFactor": 2,
+          "legendFormat": "{{device}}_下载",
+          "metric": "",
+          "range": true,
+          "refId": "A",
+          "step": 600,
+          "target": ""
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "increase(node_network_transmit_bytes_total{instance=~\"$instance:.+\"}[1m])",
+          "hide": false,
+          "interval": "1m",
+          "intervalFactor": 2,
+          "legendFormat": "{{device}}_上传",
+          "range": true,
+          "refId": "B",
+          "step": 600
+        }
+      ],
+      "title": "【$instance】每分钟流量",
       "type": "timeseries"
     },
     {
@@ -5253,9 +5067,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 7,
+        "w": 8,
         "x": 0,
-        "y": 56
+        "y": 64
       },
       "id": 209,
       "interval": "15s",
@@ -5511,8 +5325,8 @@
       "gridPos": {
         "h": 8,
         "w": 8,
-        "x": 7,
-        "y": 56
+        "x": 8,
+        "y": 64
       },
       "id": 207,
       "options": {
@@ -5607,7 +5421,7 @@
           "refId": "F"
         }
       ],
-      "title": "【$instance】Cache命中率",
+      "title": "【$instance】Cache Miss率",
       "type": "timeseries"
     },
     {
@@ -5671,9 +5485,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 9,
-        "x": 15,
-        "y": 56
+        "w": 8,
+        "x": 16,
+        "y": 64
       },
       "id": 208,
       "options": {
@@ -5706,7 +5520,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "",
+  "refresh": "auto",
   "schemaVersion": 38,
   "tags": [
     "Prometheus"
@@ -5829,6 +5643,6 @@
   "timezone": "browser",
   "title": "os-1",
   "uid": "os_work-1",
-  "version": 2,
+  "version": 4,
   "weekStart": ""
 }
