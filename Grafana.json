@@ -109,7 +109,7 @@
           "refId": "A"
         }
       ],
-      "title": "资源总览：（当前选中主机：$instance）",
+      "title": "资源总览：",
       "type": "row"
     },
     {
@@ -179,25 +179,6 @@
               {
                 "id": "decimals",
                 "value": 0
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "启动(天)"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "none"
-              },
-              {
-                "id": "custom.width",
-                "value": 140
-              },
-              {
-                "id": "decimals"
               }
             ]
           },
@@ -382,7 +363,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "负载"
+              "options": "5分钟负载"
             },
             "properties": [
               {
@@ -440,54 +421,12 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "TCP_tw"
-            },
-            "properties": [
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "mode": "gradient",
-                  "type": "color-background"
-                }
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "rgba(50, 172, 45, 0.97)",
-                      "value": null
-                    },
-                    {
-                      "color": "rgba(237, 129, 40, 0.89)",
-                      "value": 5000
-                    },
-                    {
-                      "color": "rgba(245, 54, 54, 0.9)",
-                      "value": 20000
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "custom.width",
-                "value": 125
-              },
-              {
-                "id": "decimals"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "CPU"
+              "options": "总线程数"
             },
             "properties": [
               {
                 "id": "custom.width",
-                "value": 51
+                "value": 85
               },
               {
                 "id": "decimals",
@@ -541,67 +480,6 @@
           },
           {
             "matcher": {
-              "id": "byName",
-              "options": "名称"
-            },
-            "properties": [
-              {
-                "id": "custom.filterable",
-                "value": true
-              },
-              {
-                "id": "custom.width",
-                "value": 75
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "健康值"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 126
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "red",
-                      "value": null
-                    },
-                    {
-                      "color": "orange",
-                      "value": 80
-                    },
-                    {
-                      "color": "green",
-                      "value": 90
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "color",
-                "value": {
-                  "mode": "thresholds"
-                }
-              },
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "mode": "gradient",
-                  "type": "color-background"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
               "id": "byRegexp",
               "options": "/.*使用率.*/"
             },
@@ -632,18 +510,6 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "IOutil使用率*"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 155
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "分区使用率*"
             },
             "properties": [
@@ -660,30 +526,6 @@
               {
                 "id": "unit",
                 "value": "percent"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "到期日"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 86
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "实例ID"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 62
               }
             ]
           },
@@ -720,6 +562,18 @@
               {
                 "id": "custom.width",
                 "value": 146
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "5分钟负载"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 101
               }
             ]
           }
@@ -784,7 +638,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "#node_memory_MemTotal_bytes{vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",name=~\".*$sname.*\"} - 0\r\nnode_memory_MemTotal_bytes{} - 0",
+          "expr": "node_memory_MemTotal_bytes{} - 0",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -799,12 +653,12 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "#cpu_num{vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",name=~\".*$sname.*\"} -0 \r\ncpu_num{} -0 ",
+          "expr": "cpu_num{} -0 ",
           "format": "table",
           "hide": false,
           "instant": true,
           "interval": "",
-          "legendFormat": "总核数",
+          "legendFormat": "总线程数",
           "refId": "C"
         },
         {
@@ -814,7 +668,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "#load_averange{vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",name=~\".*$sname.*\", time=\"5\"}-0\r\nload_averange{time=\"5\"}-0",
+          "expr": "load_averange{time=\"5\"}-0",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -859,7 +713,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "\r\n    sum(\r\n        node_filesystem_size_bytes{fstype!=\"\"}#vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",name=~\".*$sname.*\",fstype=~\"ext.?|xfs\"}\r\n        -\r\n        node_filesystem_avail_bytes{fstype!=\"\"}#vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",name=~\".*$sname.*\",fstype=~\"ext.?|xfs\"}\r\n    )by (instance) \r\n    *\r\n        100\r\n    /\r\n        sum(node_filesystem_size_bytes{fstype!=\"\"}#vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",name=~\".*$sname.*\",fstype=~\"ext.?|xfs\"}\r\n    )\r\n    by(instance)",
+          "expr": "\r\n    sum(\r\n        node_filesystem_size_bytes{fstype!=\"\"}\r\n        -\r\n        node_filesystem_avail_bytes{fstype!=\"\"}\r\n    )by (instance) \r\n    *\r\n        100\r\n    /\r\n        sum(node_filesystem_size_bytes{fstype!=\"\"}\r\n    )\r\n    by(instance)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -874,7 +728,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "# max(rate(node_disk_read_bytes_total{vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",name=~\".*$sname.*\"}[$interval])) by (instance)\r\nsum by (instance)(rate(node_disk_read_bytes_total[$interval]))",
+          "expr": "sum by (instance)(rate(node_disk_read_bytes_total[$interval]))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -889,7 +743,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "#max(rate(node_disk_written_bytes_total{vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",name=~\".*$sname.*\"}[$interval])) by (instance)\r\nsum by (instance)(rate(node_disk_write_bytes_total[$interval]))",
+          "expr": "sum by (instance)(rate(node_disk_write_bytes_total[$interval]))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -919,22 +773,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "node_sockstat_TCP_tw{vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",name=~\".*$sname.*\"} - 0",
-          "format": "table",
-          "hide": true,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "TIME_WAIT",
-          "refId": "N"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "#max(rate(node_network_receive_bytes_total{vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",name=~\".*$sname.*\"}[$interval])*8) by (instance)\r\nsum by (instance) (irate(node_network_receive_bytes_total{}[$interval]))",
+          "expr": "sum by (instance) (irate(node_network_receive_bytes_total{}[$interval]))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -949,28 +788,13 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "#max(rate(node_network_transmit_bytes_total{vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",name=~\".*$sname.*\"}[$interval])*8) by (instance)\r\nsum by (instance) (irate(node_network_transmit_bytes_total{}[$interval])) ",
+          "expr": "sum by (instance) (irate(node_network_transmit_bytes_total{}[$interval])) ",
           "format": "table",
           "hide": false,
           "instant": true,
           "interval": "",
           "legendFormat": "上传带宽",
           "refId": "K"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "max(rate(node_disk_io_time_seconds_total{vendor=~\"$vendor\",account=~\"$account\",group=~\"$group\",name=~\"$name\",name=~\".*$sname.*\"}[$interval])) by (instance) *100",
-          "format": "table",
-          "hide": true,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "__auto",
-          "refId": "P"
         }
       ],
       "title": "服务器资源总览表",
@@ -1018,7 +842,7 @@
             },
             "renameByName": {
               "Value #B": "内存",
-              "Value #C": "总核数",
+              "Value #C": "总线程数",
               "Value #D": "启动(天)",
               "Value #E": "分区使用率*",
               "Value #F": "CPU使用率",
@@ -1027,7 +851,7 @@
               "Value #I": "磁盘写入*",
               "Value #J": "下载带宽*",
               "Value #K": "上传带宽*",
-              "Value #L": "负载",
+              "Value #L": "5分钟负载",
               "Value #M": "连接数",
               "Value #N": "TCP_tw",
               "Value #O": "健康值",
@@ -1107,201 +931,6 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "192.168.200.241:9100_Total"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "dark-red",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Idle - Waiting for something to happen"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#052B51",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "guest"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#9AC48A",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "idle"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#052B51",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "iowait"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#EAB839",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "irq"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#BF1B00",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "nice"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#C15C17",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "sdb_每秒I/O操作%"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#d683ce",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "softirq"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#E24D42",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "steal"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#FCE2DE",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "system"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#508642",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "user"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#5195CE",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "磁盘花费在I/O操作占比"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#ba43a9",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "总平均使用率"
             },
             "properties": [
@@ -1330,7 +959,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "总核数"
+              "options": "cpu线程数"
             },
             "properties": [
               {
@@ -1550,111 +1179,6 @@
           "unit": "bytes"
         },
         "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "192.168.200.241:9100_总内存"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "dark-red",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "内存_Avaliable"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#6ED0E0",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "内存_Cached"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#EF843C",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "内存_Free"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#629E51",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "内存_Total"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#6d1f62",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "内存_Used"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#eab839",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "可用"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#9ac48a",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
           {
             "matcher": {
               "id": "byName",
@@ -1995,7 +1519,7 @@
           "refId": "A"
         }
       ],
-      "title": "资源明细：【$instance】",
+      "title": "资源明细：（当前选中主机：$instance）",
       "type": "row"
     },
     {
@@ -2815,201 +2339,6 @@
         "overrides": [
           {
             "matcher": {
-              "id": "byName",
-              "options": "192.168.200.241:9100_Total"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "dark-red",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Idle - Waiting for something to happen"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#052B51",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "guest"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#9AC48A",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "idle"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#052B51",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "iowait"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#EAB839",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "irq"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#BF1B00",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "nice"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#C15C17",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "sdb_每秒I/O操作%"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#d683ce",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "softirq"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#E24D42",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "steal"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#FCE2DE",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "system"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#508642",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "user"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#5195CE",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "磁盘花费在I/O操作占比"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#ba43a9",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
               "id": "byRegexp",
               "options": "/.*总使用率/"
             },
@@ -3074,7 +2403,7 @@
         ]
       },
       "gridPos": {
-        "h": 8,
+        "h": 11,
         "w": 8,
         "x": 0,
         "y": 24
@@ -3197,7 +2526,7 @@
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 11,
         "w": 8,
         "x": 8,
         "y": 24
@@ -3408,7 +2737,7 @@
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 22,
         "w": 8,
         "x": 16,
         "y": 24
@@ -3476,20 +2805,6 @@
           "range": true,
           "refId": "A",
           "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "node_process_virtual_memory_bytes{instance=~\"$instance:.+\"} / node_process_virtual_memory_max_bytes {instance=~\"$instance:.+\"} * 100",
-          "hide": true,
-          "instant": false,
-          "legendFormat": "进程{{pid}}虚存使用率",
-          "range": true,
-          "refId": "B"
         }
       ],
       "thresholds": [],
@@ -3553,10 +2868,10 @@
       "fillGradient": 1,
       "grid": {},
       "gridPos": {
-        "h": 8,
+        "h": 11,
         "w": 8,
         "x": 0,
-        "y": 32
+        "y": 35
       },
       "height": "300",
       "hiddenSeries": false,
@@ -3800,10 +3115,10 @@
         ]
       },
       "gridPos": {
-        "h": 8,
+        "h": 11,
         "w": 8,
         "x": 8,
-        "y": 32
+        "y": 35
       },
       "id": 202,
       "links": [],
@@ -3919,10 +3234,10 @@
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 10,
         "w": 8,
-        "x": 16,
-        "y": 32
+        "x": 0,
+        "y": 46
       },
       "hiddenSeries": false,
       "id": 174,
@@ -4161,10 +3476,10 @@
         ]
       },
       "gridPos": {
-        "h": 8,
+        "h": 10,
         "w": 8,
-        "x": 0,
-        "y": 40
+        "x": 8,
+        "y": 46
       },
       "id": 168,
       "links": [],
@@ -4370,10 +3685,10 @@
         ]
       },
       "gridPos": {
-        "h": 8,
+        "h": 10,
         "w": 8,
-        "x": 8,
-        "y": 40
+        "x": 16,
+        "y": 46
       },
       "id": 161,
       "links": [],
@@ -4429,126 +3744,6 @@
         }
       ],
       "title": "【$instance】磁盘读写速率（IOPS）",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "links": [],
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 40
-      },
-      "id": 183,
-      "links": [],
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.2.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "increase(node_network_receive_bytes_total{instance=~\"$instance:.+\"}[1m])",
-          "interval": "1m",
-          "intervalFactor": 2,
-          "legendFormat": "{{device}}_下载",
-          "metric": "",
-          "range": true,
-          "refId": "A",
-          "step": 600,
-          "target": ""
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "increase(node_network_transmit_bytes_total{instance=~\"$instance:.+\"}[1m])",
-          "hide": false,
-          "interval": "1m",
-          "intervalFactor": 2,
-          "legendFormat": "{{device}}_上传",
-          "range": true,
-          "refId": "B",
-          "step": 600
-        }
-      ],
-      "title": "【$instance】每分钟流量",
       "type": "timeseries"
     },
     {
@@ -4615,22 +3810,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "192.168.200.241:9100_TCP_alloc"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "semi-dark-blue",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "TCP"
+              "options": "TCP连接数"
             },
             "properties": [
               {
@@ -4639,48 +3819,6 @@
                   "fixedColor": "#6ED0E0",
                   "mode": "fixed"
                 }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "TCP_alloc"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "blue",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/.*Sockets_used/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#E02F44",
-                  "mode": "fixed"
-                }
-              },
-              {
-                "id": "custom.drawStyle",
-                "value": "line"
-              },
-              {
-                "id": "custom.lineWidth",
-                "value": 2
-              },
-              {
-                "id": "custom.axisLabel",
-                "value": "已使用的所有协议套接字总量"
               }
             ]
           },
@@ -4728,9 +3866,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 10,
+        "w": 8,
         "x": 0,
-        "y": 48
+        "y": 56
       },
       "id": 158,
       "interval": "",
@@ -4767,135 +3905,6 @@
           "legendFormat": "TCP连接数",
           "refId": "A",
           "step": 20
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "node_sockstat_TCP_tw{instance=~\"$instance:.+\"}",
-          "format": "time_series",
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "TCP_tw",
-          "range": true,
-          "refId": "D"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "node_sockstat_sockets_used{instance=~\"$instance:.+\"}",
-          "hide": false,
-          "interval": "2m",
-          "intervalFactor": 1,
-          "legendFormat": "Sockets_used",
-          "range": true,
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "node_sockstat_UDP_inuse{instance=~\"$instance:.+\"}",
-          "interval": "",
-          "legendFormat": "UDP_inuse",
-          "range": true,
-          "refId": "C"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "node_sockstat_TCP_alloc{instance=~\"$instance:.+\"}",
-          "interval": "",
-          "legendFormat": "TCP_alloc",
-          "range": true,
-          "refId": "E"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "rate(node_netstat_Tcp_PassiveOpens{instance=~\"$instance:.+\"}[$interval])",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{instance}}_Tcp_PassiveOpens",
-          "range": true,
-          "refId": "G"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "rate(node_netstat_Tcp_ActiveOpens{instance=~\"$instance:.+\"}[$interval])",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{instance}}_Tcp_ActiveOpens",
-          "range": true,
-          "refId": "F"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "rate(node_netstat_Tcp_InSegs{instance=~\"$instance:.+\"}[$interval])",
-          "interval": "",
-          "legendFormat": "Tcp_InSegs",
-          "range": true,
-          "refId": "H"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "rate(node_netstat_Tcp_OutSegs{instance=~\"$instance:.+\"}[$interval])",
-          "interval": "",
-          "legendFormat": "Tcp_OutSegs",
-          "range": true,
-          "refId": "I"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "rate(node_netstat_Tcp_RetransSegs{instance=~\"$instance:.+\"}[$interval])",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "Tcp_RetransSegs",
-          "range": true,
-          "refId": "J"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "rate(node_netstat_TcpExt_ListenDrops{instance=~\"$instance:.+\"}[$interval])",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "",
-          "range": true,
-          "refId": "K"
         }
       ],
       "title": "【$instance】网络Socket连接信息",
@@ -5018,9 +4027,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 14,
-        "x": 10,
-        "y": 48
+        "w": 8,
+        "x": 8,
+        "y": 56
       },
       "id": 157,
       "links": [],
@@ -5086,6 +4095,126 @@
       "fieldConfig": {
         "defaults": {
           "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 56
+      },
+      "id": 183,
+      "links": [],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "increase(node_network_receive_bytes_total{instance=~\"$instance:.+\"}[1m]) - 0",
+          "interval": "1m",
+          "intervalFactor": 2,
+          "legendFormat": "{{device}}_下载",
+          "metric": "",
+          "range": true,
+          "refId": "A",
+          "step": 600,
+          "target": ""
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "increase(node_network_transmit_bytes_total{instance=~\"$instance:.+\"}[1m]) - 0",
+          "hide": false,
+          "interval": "1m",
+          "intervalFactor": 2,
+          "legendFormat": "{{device}}_上传",
+          "range": true,
+          "refId": "B",
+          "step": 600
+        }
+      ],
+      "title": "【$instance】每分钟流量",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
             "mode": "thresholds"
           },
           "mappings": [],
@@ -5100,162 +4229,13 @@
           },
           "unit": "bytes"
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "运行时间"
-            },
-            "properties": [
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "red",
-                      "value": null
-                    },
-                    {
-                      "color": "orange",
-                      "value": 3600
-                    },
-                    {
-                      "color": "green",
-                      "value": 7200
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "unit",
-                "value": "s"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "总内存"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "bytes"
-              },
-              {
-                "id": "decimals",
-                "value": 0
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "CPU iowait"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "percent"
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "percentage",
-                  "steps": [
-                    {
-                      "color": "green",
-                      "value": null
-                    },
-                    {
-                      "color": "orange",
-                      "value": 40
-                    },
-                    {
-                      "color": "red",
-                      "value": 60
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "decimals",
-                "value": 2
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "总文件描述符"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "short"
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "red",
-                      "value": null
-                    },
-                    {
-                      "color": "orange",
-                      "value": 50000
-                    },
-                    {
-                      "color": "green",
-                      "value": 200000
-                    }
-                  ]
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "最大进程打开文件"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "none"
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "red",
-                      "value": null
-                    },
-                    {
-                      "color": "orange",
-                      "value": 10000
-                    },
-                    {
-                      "color": "green",
-                      "value": 50000
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 8,
-        "w": 7,
+        "w": 8,
         "x": 0,
-        "y": 56
+        "y": 64
       },
       "id": 209,
       "interval": "15s",
@@ -5511,8 +4491,8 @@
       "gridPos": {
         "h": 8,
         "w": 8,
-        "x": 7,
-        "y": 56
+        "x": 8,
+        "y": 64
       },
       "id": 207,
       "options": {
@@ -5607,7 +4587,7 @@
           "refId": "F"
         }
       ],
-      "title": "【$instance】Cache命中率",
+      "title": "【$instance】Cache Miss率",
       "type": "timeseries"
     },
     {
@@ -5671,9 +4651,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 9,
-        "x": 15,
-        "y": 56
+        "w": 8,
+        "x": 16,
+        "y": 64
       },
       "id": 208,
       "options": {
@@ -5706,7 +4686,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "",
+  "refresh": "auto",
   "schemaVersion": 38,
   "tags": [
     "Prometheus"
@@ -5829,6 +4809,6 @@
   "timezone": "browser",
   "title": "os-1",
   "uid": "os_work-1",
-  "version": 2,
+  "version": 4,
   "weekStart": ""
 }
