@@ -99,7 +99,7 @@ def get_node_info():
             value = parts[1].strip().split()[0]
             mem_info[key] = int(value) * 1024
     # disk size info
-    df = pd.read_csv(os.popen("df -h"), delim_whitespace=True)
+    df = pd.read_csv(os.popen("df -h"), sep='\s+')
     selected_rows = df[df['Filesystem'].str.startswith('/dev/sd') |
                        df['Filesystem'].str.startswith('/dev/nvme') |
                        df['Filesystem'].str.startswith('/dev/vd')]
