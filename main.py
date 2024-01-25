@@ -56,7 +56,7 @@ def get_node_info():
     with os.popen("lscpu") as file:
         for line in file:
             line = line.strip()
-            pattern = r'(\d+)\s*(\w+)'
+            pattern = r'(\d+(?:\.\d+)?)\s*(\w+)'
             if line.startswith('Thread(s)'):
                 cpu_info['threadPerCore'] = int(line.split(':')[1])
             elif line.startswith('Core(s)'):
@@ -65,16 +65,16 @@ def get_node_info():
                 cpu_info['socket_num'] = int(line.split(':')[1])
             elif line.startswith('L1d'):
                 match = re.findall(pattern, line)[1]
-                cpu_info['l1d_size'] = int(match[0]) * convert_unit_to_bytes(match[1])
+                cpu_info['l1d_size'] = float(match[0]) * convert_unit_to_bytes(match[1])
             elif line.startswith('L1i'):
                 match = re.findall(pattern, line)[1]
-                cpu_info['l1i_size'] = int(match[0]) * convert_unit_to_bytes(match[1])
+                cpu_info['l1i_size'] = float(match[0]) * convert_unit_to_bytes(match[1])
             elif line.startswith('L2'):
                 match = re.findall(pattern, line)[1]
-                cpu_info['l2_size'] = int(match[0]) * convert_unit_to_bytes(match[1])
+                cpu_info['l2_size'] = float(match[0]) * convert_unit_to_bytes(match[1])
             elif line.startswith('L3'):
                 match = re.findall(pattern, line)[1]
-                cpu_info['l3_size'] = int(match[0]) * convert_unit_to_bytes(match[1])
+                cpu_info['l3_size'] = float(match[0]) * convert_unit_to_bytes(match[1])
     # stat info
     stat_info = {}
     with open('/proc/stat', 'r') as file:
@@ -99,11 +99,21 @@ def get_node_info():
             value = parts[1].strip().split()[0]
             mem_info[key] = int(value) * 1024
     # disk size info
-    df = pd.read_csv(os.popen("df -h"), sep='\s+')
+    output = os.popen("df -h").read().strip().split('\n')
+    df_output = []
+    for line in output:
+        parts = line.split()
+        if len(parts) > 6:
+            fields = parts[:5]
+            mount_point = ' '.join(parts[5:])
+            df_output.append(fields + [mount_point])
+        else:
+            df_output.append(parts)
+    df = pd.DataFrame(df_output[1:], columns=df_output[0])
     selected_rows = df[df['Filesystem'].str.startswith('/dev/sd') |
                        df['Filesystem'].str.startswith('/dev/nvme') |
                        df['Filesystem'].str.startswith('/dev/vd')]
-    disk_size_info = selected_rows[['Filesystem', 'Size', 'Avail', 'Mounted']]
+    disk_size_info = selected_rows[['Filesystem', 'Size', 'Avail', 'Mounted on']]
     disk_size_info.loc[:, 'Size'] = disk_size_info['Size'].apply(convert_to_bytes)
     disk_size_info.loc[:, 'Avail'] = disk_size_info['Avail'].apply(convert_to_bytes)
     disk_size_info = disk_size_info.copy()
@@ -245,8 +255,8 @@ while True:
     mem_available_size.set(cur_info.mem_info['MemAvailable'])
     mem_total_size.set(cur_info.mem_info['MemTotal'])
     for index, row in cur_info.disk_size_info.iterrows():
-        filesystem_avail_size.labels(device=row['Filesystem'],fstype=row['Type'],mountpoint=row['Mounted']).set(row['Avail'])
-        filesystem_size.labels(device=row['Filesystem'],fstype=row['Type'],mountpoint=row['Mounted']).set(row['Size'])
+        filesystem_avail_size.labels(device=row['Filesystem'],fstype=row['Type'],mountpoint=row['Mounted on']).set(row['Avail'])
+        filesystem_size.labels(device=row['Filesystem'],fstype=row['Type'],mountpoint=row['Mounted on']).set(row['Size'])
     for key in cur_info.disk_io_info:
         disk_reads_count.labels(device=key).inc(cur_info.disk_io_info[key]['read_count'] - last_info.disk_io_info[key]['read_count'])
         disk_reads_size.labels(device=key).inc(cur_info.disk_io_info[key]['read_size'] - last_info.disk_io_info[key]['read_size'])
